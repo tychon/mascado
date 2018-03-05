@@ -1,0 +1,5 @@
+
+.cache/
+__pycache__/
+docs/build/
+docs/source/maskastrometry*
