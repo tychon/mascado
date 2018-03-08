@@ -367,8 +367,8 @@ class PolyVectorField:
         PolyVectorField
              New vector field of given degree.
         """
-        subx = self.xpoly.make_single_order_subpoly(degree)
-        suby = self.ypoly.make_single_order_subpoly(degree)
+        subx = self.xpoly.make_single_degree_subpoly(degree)
+        suby = self.ypoly.make_single_degree_subpoly(degree)
         return PolyVectorField(subx, suby)
 
 
