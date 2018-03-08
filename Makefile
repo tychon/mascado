@@ -3,9 +3,9 @@ test:
 	python -m unittest discover --start-directory tests
 
 docupdate:
-	rm -r docs/source/maskastrometry.*
+	rm -rf docs/source/mascado.*
 	cd docs; \
-	sphinx-apidoc -MeT -o source/ ../maskastrometry
+	sphinx-apidoc -MeT -o source/ ../mascado
 
 docbuild:
 	cd docs; \

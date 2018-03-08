@@ -11,8 +11,8 @@ import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 from matplotlib.ticker import MaxNLocator
 
-from maskastrometry.distortions.polynomials import PolyVectorField, Legendre
-from maskastrometry.distortions.polyfit import polyfit_svd
+from mascado.distortions.polynomials import PolyVectorField, Legendre
+from mascado.distortions.polyfit import polyfit_svd
 
 
 def set_fontsize(small=8, medium=10, bigger=12):

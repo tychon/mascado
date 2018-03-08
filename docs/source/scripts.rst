@@ -3,9 +3,9 @@ User Scripts
 ============
 
 In the ``./scripts`` directory of the repository you can find several
-scripts for various tasks.  Since they are using the
-``maskastrometry`` module, you have to make that available in your
-python path, or run the scripts from the repository root using::
+scripts for various tasks.  Since they are using the ``mascado``
+module, you have to make that available in your python path, or run
+the scripts from the repository root using::
 
   $ python3 -m scripts.SCRIPTNAME ARGS...
 

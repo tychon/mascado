@@ -6,8 +6,8 @@
 from unittest import TestCase
 
 import numpy as np
-from maskastrometry.distortions.polynomials import PolyVectorField, Legendre
-from maskastrometry.distortions.polyfit import (
+from mascado.distortions.polynomials import PolyVectorField, Legendre
+from mascado.distortions.polyfit import (
     polyfit_svd, polyfit_svd_iterative)
 
 

@@ -8,9 +8,9 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 
-import maskastrometry.utility.affine as affine
-import maskastrometry.utility.zemax as zemax
-import maskastrometry.utility.plotting as plotting
+import mascado.utility.affine as affine
+import mascado.utility.zemax as zemax
+import mascado.utility.plotting as plotting
 
 
 def main():

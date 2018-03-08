@@ -1,9 +1,11 @@
 
-# maskastrometry
+# MASCADO
 
-Package for analyzing geometric distortions of optical systems.
+Package for analyzing geometric distortions of optical systems.  This
+software is meant for quick-look inspection of distortion data sets.
 
-To build the documentation get Sphinx and run
+The documentation is available at https://tychons.net/mascado/  
+If you want to build it yourself, get Sphinx and run
 
     $ make docupdate
     $ make docbuild

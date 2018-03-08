@@ -14,7 +14,7 @@ turn them up.
 Examples
 --------
 
->>> from maskastrometry.distortions.polynomials import (
+>>> from mascado.distortions.polynomials import (
 ...     PolyVectorField, Legendre)
 >>> vf = PolyVectorField(Legendre(3))
 >>> grid = np.array([[0, 0], [1, 1], [0, 1], [1, 0], [0.5, 0.5]])
@@ -43,7 +43,7 @@ def polyfit_svd(vf, positions, vectors, sigmas=None,
 
     Parameters
     ----------
-    vf : :class:`maskastrometry.distortions.polynomials.PolyVectorField`
+    vf : :class:`mascado.distortions.polynomials.PolyVectorField`
         Model of vector field providing the Vandermonde matrix.
     positions : (N,2)-shaped array
         x,y positions of data points.
@@ -206,7 +206,7 @@ def polyfit_svd_iterative(vf, positions, vectors, sigmas, maxoutliers,
 
     Parameters
     ----------
-    vf : :class:`maskastrometry.distortions.polynomials.PolyVectorField`
+    vf : :class:`mascado.distortions.polynomials.PolyVectorField`
         2D vector field.  Internal parameters are neither used nor changed.
     positions : (N, 2)-shaped array
     vectors : (N, 2)-shaped array

@@ -7,7 +7,7 @@ from unittest import TestCase
 
 import numpy as np
 
-from maskastrometry.distortions.polynomials import (
+from mascado.distortions.polynomials import (
     Cartesian, Legendre, Chebyshev, Zernike,
     PolyVectorField)
 

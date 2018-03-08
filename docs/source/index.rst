@@ -4,13 +4,15 @@ Welcome to the MASCADO project documentation!
 
 The delicious inspection tool for Mask AStrometry for MICADO.
 
+Project is on Github at `<https://github.com/tychon/mascado>`_.
+
 .. toctree::
    :maxdepth: 4
    :caption: Contents:
 
    scripts
-   maskastrometry.distortions
-   maskastrometry.utility
+   mascado.distortions
+   mascado.utility
 
 
 License
