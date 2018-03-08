@@ -42,8 +42,8 @@ def main():
     # remove affine part
     atrafo = affine.affine_lstsq(dpos, refpos)
     dpos = affine.affine_trafo(dpos, atrafo)
-    distortions = dpos - refpos
     # now everything is in arcseconds
+    distortions = dpos - refpos
     print("Affine transform: distorted (mm) -> reference grid (arcseconds):")
     print(atrafo)
 

@@ -20,8 +20,8 @@ def set_fontsize(small=8, medium=10, bigger=12):
     plt.rc('font', size=medium)          # controls default text sizes
     plt.rc('axes', titlesize=medium)     # fontsize of the axes title
     plt.rc('axes', labelsize=medium)     # fontsize of the x and y labels
-    plt.rc('xtick', labelsize=small)    # fontsize of the tick labels
-    plt.rc('ytick', labelsize=small)    # fontsize of the tick labels
+    plt.rc('xtick', labelsize=small)     # fontsize of the tick labels
+    plt.rc('ytick', labelsize=small)     # fontsize of the tick labels
     plt.rc('legend', fontsize=medium)    # legend fontsize
     plt.rc('figure', titlesize=bigger)   # fontsize of the figure title
 
@@ -188,7 +188,7 @@ def plot_residuals(fig, positions, residuals, inliers=None, limits=(-1.1, 1.1),
 
 
 def make_grid_analysis(fig, positions, distortions, posscale, maxorder,
-                       name="distortions"):
+                       minorder=0, name="distortions"):
     """Run analysis of distortion pattern and display in four panels.
 
     The four panels are:
@@ -219,13 +219,14 @@ def make_grid_analysis(fig, positions, distortions, posscale, maxorder,
     """
     # RMS residuals over max order
     # Last iteration at maxorder
-    orders = list(range(1, maxorder+1))
+    orders = list(range(minorder, maxorder+1))
     rmsperorder = []
     for order in orders:
         print("Fitting {:d}. order Legendre polynomial".format(order))
         vf = PolyVectorField(Legendre(order))
-        params, residuals, resvar = polyfit_svd(vf, positions, distortions)
-        rmsperorder.append(resvar)
+        params, residuals, _ = polyfit_svd(vf, positions, distortions)
+        resrms = np.sqrt(np.sum(residuals**2)/residuals.size)
+        rmsperorder.append(resrms)
     rmsperorder = np.array(rmsperorder)
 
     print("In {:d}. order fit:".format(order))
@@ -235,10 +236,10 @@ def make_grid_analysis(fig, positions, distortions, posscale, maxorder,
     for order in indivorder:
         subvf = vf.make_single_degree_subpoly(order)
         model = subvf.model(positions)
-        rmspower = np.sqrt(np.sum(model**2)/model.size)
-        rmspowerinorder.append(rmspower)
+        modelrms = np.sqrt(np.sum(model**2)/model.size)
+        rmspowerinorder.append(modelrms)
         print("  {:8.3g} RMS distortions in {:d}. degree terms".format(
-            rmspower, order))
+            modelrms, order))
     rmspowerinorder = np.array(rmspowerinorder)
 
     # Actual plotting.
@@ -271,8 +272,8 @@ def make_grid_analysis(fig, positions, distortions, posscale, maxorder,
     # RMS residuals over max order
     ax3 = fig.add_subplot(gs[1, 0])
     ax3.scatter(orders, rmsperorder * 1e6, marker='D')
-    vmin = 0.7 * np.min(rmsperorder * 1e6)
-    vmax = 1.3 * np.max(rmsperorder * 1e6)
+    vmin = 0.6 * np.min(rmsperorder * 1e6)
+    vmax = 1.4 * np.max(rmsperorder * 1e6)
     ax3.set_ylim(vmin, vmax)
     ax3.set_yscale('log')
     ax3.set_ylabel("RMS residuals / uas")
@@ -296,6 +297,6 @@ def make_grid_analysis(fig, positions, distortions, posscale, maxorder,
     ax4.set_ylim(vmin, vmax)
     ax4.set_yscale('log')
     uncapname = name[:1].lower() + name[1:]
-    ax4.set_ylabel("RMS power of "+uncapname+" / uas")
-    ax4.set_xlabel("total degree of terms")
+    ax4.set_ylabel("RMS of "+uncapname+" model / uas")
+    ax4.set_xlabel("total degree of terms in {:d}. order fit".format(maxorder))
     ax4.xaxis.set_major_locator(MaxNLocator(integer=True))
