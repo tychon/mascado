@@ -7,9 +7,12 @@ Welcome to maskastrometry's documentation!
 ==========================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
    :caption: Contents:
 
+   scripts
+   maskastrometry.distortions
+   maskastrometry.utility
 
 
 Indices and tables
