@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.abspath('../../'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'maskastrometry'
+project = 'MASCADO'
 copyright = '2018, Hannes Riechert'
 author = 'Hannes Riechert'
 

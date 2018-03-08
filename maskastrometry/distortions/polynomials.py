@@ -1,4 +1,7 @@
 
+# Copyright 2018 Hannes Riechert at Max-Planck-Institute for Astronomy.
+# Licensed under GPL-3.0-or-later.  See COPYING for details.
+
 """2D polynomials and vector fields.
 
 Interface follows object oriented paradigm.

@@ -1,10 +1,8 @@
-.. maskastrometry documentation master file, created by
-   sphinx-quickstart on Thu Mar  1 18:15:38 2018.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
-Welcome to maskastrometry's documentation!
-==========================================
+Welcome to the MASCADO project documentation!
+=============================================
+
+The delicious inspection tool for Mask AStrometry for MICADO.
 
 .. toctree::
    :maxdepth: 4
@@ -13,6 +11,20 @@ Welcome to maskastrometry's documentation!
    scripts
    maskastrometry.distortions
    maskastrometry.utility
+
+
+License
+=======
+
+| Copyright 2018 Hannes Riechert hannes@tychons.net at Max-Planck-Institute for Astronomy, Heidelberg.
+| Licensed under GPL-3.0-or-later.  You can find the full text of the license in COPYING.
+
+This software is meant for quick-look inspection of distortion data
+sets.  If you plan to publish the obtained results, please contact the
+authors for permission and latest bug fixes:
+
+| Hannes Riechert: hannes@tychons.net, riechert@mpia.de
+| Jörg-Uwe Pott: jpott@mpia.de
 
 
 Indices and tables

@@ -1,4 +1,7 @@
 
+# Copyright 2018 Hannes Riechert at Max-Planck-Institute for Astronomy.
+# Licensed under GPL-3.0-or-later.  See COPYING for details.
+
 """Helpers for Zemax files."""
 
 

@@ -1,4 +1,7 @@
 
+# Copyright 2018 Hannes Riechert at Max-Planck-Institute for Astronomy.
+# Licensed under GPL-3.0-or-later.  See COPYING for details.
+
 """Provide 2D affine transformations.
 
 Interface follows a functional paradigm.  Runs on plain NumPy arrays

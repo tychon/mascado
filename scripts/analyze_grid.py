@@ -1,5 +1,9 @@
 #!/usr/bin/python3
 
+# Copyright 2018 Hannes Riechert at Max-Planck-Institute for Astronomy.
+# Licensed under GPL-3.0-or-later.  See COPYING for details.
+
+
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt

@@ -1,6 +1,6 @@
 
 test:
-	python -m unittest discover --start-directory tests tests
+	python -m unittest discover --start-directory tests
 
 docupdate:
 	rm -r docs/source/maskastrometry.*
