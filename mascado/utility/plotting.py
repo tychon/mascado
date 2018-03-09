@@ -13,6 +13,7 @@ from matplotlib.ticker import MaxNLocator
 
 from mascado.distortions.polynomials import PolyVectorField, Legendre
 from mascado.distortions.polyfit import polyfit_svd
+import mascado.distortions.analysis as analysis
 
 
 def set_fontsize(small=8, medium=10, bigger=12):
@@ -30,7 +31,7 @@ def plot_distortions(ax, positions, distortions,
                      inliers=None, limits=(-1.1, 1.1),
                      positionunits=(1, "normalized"), positionunits2=None,
                      arrowunits="arcsec", keylen=None,
-                     keypos=(0.7, 1.05), dotsize=2):
+                     keypos=(0.5, 1.04), dotsize=2):
     """Make arrow plot of distortions.
 
     Parameters
@@ -59,6 +60,9 @@ def plot_distortions(ax, positions, distortions,
         If set to `None` the RMS value is used.
     keypos : 2-tuple of floats
         The position of the key in axes coordinates.
+        If the ``keylen`` is not given and the x component of ``keypos``
+        inside the axes (0 to 1), a note about the RMS is appended to
+        the key label.
     dotsize : float
         Diameter of outlier dots in pt.
     """
@@ -71,13 +75,19 @@ def plot_distortions(ax, positions, distortions,
     ax.scatter(positions[~inliers, 0] * ps, positions[~inliers, 1] * ps,
                s=dotsize**2, marker='.', color='red')
 
+    keylabel = None
     if keylen is None:
         rmslen = np.sqrt(np.sum(distortions[inliers]**2)
                          / distortions[inliers].size)
+        if np.isclose(rmslen, 0, rtol=1e-11, atol=1e-11):
+            raise ValueError("Distortions too close to zero.")
         keylen = rmslen * 2
         keylen = np.round(keylen, -int(np.floor(np.log10(keylen)))+1)
-    ax.quiverkey(quiver, *keypos, keylen,
-                 label="{:.2g} {:s}".format(keylen, arrowunits),
+        if 0 < keypos[0] < 1:
+            keylabel = r"{:.2g} {:s} = $2\cdot$RMS".format(keylen, arrowunits)
+    if not keylabel:
+        keylabel = r"{:.2g} {:s}".format(keylen, arrowunits)
+    ax.quiverkey(quiver, *keypos, keylen, label=keylabel,
                  labelpos='E', coordinates='axes')
 
     ax.set_xlabel("position / {:s}".format(positionunits[1]))
@@ -95,7 +105,7 @@ def plot_distortions(ax, positions, distortions,
 def plot_residuals(fig, positions, residuals, inliers=None, limits=(-1.1, 1.1),
                    positionunits=(1, "normalized"),
                    arrowunits="arcsec", keylen=None,
-                   keypos=(1.15, 1.2), dotsize=1, **kwgridspec):
+                   keypos=(1.15, 1.3), dotsize=1, **kwgridspec):
     """Plot residual map with marginalized distributions.
 
     You pass a figure and keyword arguments to matplotlib.GridSpec to define
@@ -188,14 +198,14 @@ def plot_residuals(fig, positions, residuals, inliers=None, limits=(-1.1, 1.1),
 
 
 def make_grid_analysis(fig, positions, distortions, posscale, maxorder,
-                       minorder=0, name="distortions"):
+                       minorder=0, name="distortions", poly=Legendre):
     """Run analysis of distortion pattern and display in four panels.
 
     The four panels are:
 
     1. Arrow plot of distortion pattern itself.
     2. Arrow plot with marginalized distributions of residuals of
-       Legendre-fit at `maxorder`.
+       fit at `maxorder`.
     3. RMS residuals over maximum order of polynomials.
        Maximum order from 1 to `maxorder`.
     4. RMS power in each degree of polynomial of
@@ -215,32 +225,21 @@ def make_grid_analysis(fig, positions, distortions, posscale, maxorder,
     posscale : float
         Scale of normalized positions to arcseconds.
     maxorder : int
-        Maximum order for Legendre fits.
+        Maximum order for fits.
+    name : str
+        Name of distortions in plots
+        (eg. ``"drift"`` for distortions difference).
     """
-    # RMS residuals over max order
-    # Last iteration at maxorder
-    orders = list(range(minorder, maxorder+1))
-    rmsperorder = []
-    for order in orders:
-        print("Fitting {:d}. order Legendre polynomial".format(order))
-        vf = PolyVectorField(Legendre(order))
-        params, residuals, _ = polyfit_svd(vf, positions, distortions)
-        resrms = np.sqrt(np.sum(residuals**2)/residuals.size)
-        rmsperorder.append(resrms)
-    rmsperorder = np.array(rmsperorder)
+    resrms = analysis.analyze_residuals_over_order(
+        positions, distortions, maxorder,
+        poly=poly, minorder=0, info='')
 
-    print("In {:d}. order fit:".format(order))
+    print()
+    print("In {:d}. order {:s} fit:".format(maxorder, poly.__name__))
+    vf = PolyVectorField(poly(maxorder))
+    params, residuals, _ = polyfit_svd(vf, positions, distortions)
     vf.set_params(params)
-    indivorder = list(orders)
-    rmspowerinorder = []
-    for order in indivorder:
-        subvf = vf.make_single_degree_subpoly(order)
-        model = subvf.model(positions)
-        modelrms = np.sqrt(np.sum(model**2)/model.size)
-        rmspowerinorder.append(modelrms)
-        print("  {:8.3g} RMS distortions in {:d}. degree terms".format(
-            modelrms, order))
-    rmspowerinorder = np.array(rmspowerinorder)
+    modelrms = analysis.analyze_contributions_over_order(vf)
 
     # Actual plotting.
     gs = GridSpec(2, 2, width_ratios=[2, 2], height_ratios=[2, 2])
@@ -271,9 +270,9 @@ def make_grid_analysis(fig, positions, distortions, posscale, maxorder,
 
     # RMS residuals over max order
     ax3 = fig.add_subplot(gs[1, 0])
-    ax3.scatter(orders, rmsperorder * 1e6, marker='D')
-    vmin = 0.6 * np.min(rmsperorder * 1e6)
-    vmax = 1.4 * np.max(rmsperorder * 1e6)
+    ax3.scatter(resrms.order, resrms.resrms * 1e6, marker='D')
+    vmin = 0.6 * np.min(resrms.resrms * 1e6)
+    vmax = 1.4 * np.max(resrms.resrms * 1e6)
     ax3.set_ylim(vmin, vmax)
     ax3.set_yscale('log')
     ax3.set_ylabel("RMS residuals / uas")
@@ -282,14 +281,14 @@ def make_grid_analysis(fig, positions, distortions, posscale, maxorder,
 
     # RMS per individual order of max order fit
     ax4 = fig.add_subplot(gs[1, 1])
-    ax4.scatter(indivorder, rmspowerinorder * 1e6, marker='D')
-    vmin = 0.7 * np.min(rmspowerinorder * 1e6)
-    vmax = 1.5 * np.max(rmspowerinorder * 1e6)
+    ax4.scatter(modelrms.order, modelrms.modelrms * 1e6, marker='D')
+    vmin = 0.7 * np.min(modelrms.modelrms * 1e6)
+    vmax = 1.5 * np.max(modelrms.modelrms * 1e6)
     # cut off for small values, indicate with downward arrow
     if vmin < 1e-2:
         vmin = 1e0
         vmax = max(vmax, 1e2 * vmin)
-    for o, v in zip(indivorder, rmspowerinorder):
+    for o, v in zip(modelrms.order, modelrms.modelrms):
         if v * 1e6 < vmin:
             ax4.arrow(o, 2 * vmin, 0, -1*vmin, color='black',
                       width=0.01, head_width=0.1, head_length=0.1,
