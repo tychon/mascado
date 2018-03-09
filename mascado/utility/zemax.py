@@ -8,8 +8,10 @@
 import numpy as np
 import pandas as pd
 
+import mascado.utility.affine as affine
 
-def load_grid_data(fname, encoding='latin1'):
+
+def load_grid_data(fname, encoding='latin1', footer=7, nonsquareokay=False):
     """Load Zemax Grid Distortion Data from file.
 
     Parameters
@@ -18,17 +20,33 @@ def load_grid_data(fname, encoding='latin1'):
         File name.
     encoding : string
         File encoding, defaults to `latin1`.
+    footer : int
+        Number of non-empty lines that are not data rows at the
+        end of the file
+    nonsquareokay : bool
+        Set to ``True`` to avoid exception if the number of
+        points in the data set is not a square number.
 
     Returns
     -------
     pandas.DataFrame
-        DataFrame with 9 columns: i, j, x-field, y-field, r-field,
-        x-predicted, y-predicted, x-real, y-real.
+        DataFrame with 9 columns: i, j, x-field (degree), y-field (degrees),
+        r-field (degrees), x-predicted (mm), y-predicted (mm),
+        x-real (mm), y-real (mm).
+
+    Raises
+    ------
+    ValueError
+        If the number of points is not a square number and
+        ``nonsquareokay`` is ``False``.
     """
     data = np.genfromtxt(
         fname, encoding=encoding,
-        skip_header=13, skip_footer=7,
+        skip_header=13, skip_footer=footer,
         usecols=list(range(9)))
+    if not nonsquareokay and data.shape[0]**0.5 % 1 != 0:
+        raise ValueError("Input file does not contain a square number of"
+                         " data points: "+fname)
     df = pd.DataFrame(data, columns=[
         'i', 'j', 'x-field', 'y-field', 'r-field',
         'x-predicted', 'y-predicted', 'x-real', 'y-real'])
@@ -41,6 +59,7 @@ def have_same_grid(cats):
     Parameters
     ----------
     cats : list of pandas.DataFrame
+        Catalogs as described by doc of ``load_grid_data()``.
 
     Returns
     -------
@@ -50,3 +69,71 @@ def have_same_grid(cats):
     yfields = [c.loc[:, 'y-field'] for c in cats]
     return all(xfields[0].equals(f) for f in xfields[1:]) \
         and all(yfields[0].equals(f) for f in yfields[1:])
+
+
+def distortions_on_sky(cats, platescale=None, scale=1):
+    """Get distortions and normalized positions on-sky.
+
+    By default, an affine transform is used for the transformation
+    from focal plane to sky.  The affine transform is the
+    least-squares solution for the first catalog and the same trafo is
+    applied to all catalogs, so that a drift in linear terms is
+    conserved.  If ``platescale`` is passed, no affine transform, but
+    a fixed scale is used.
+
+    Parameters
+    ----------
+    cats : list of pandas.DataFrame
+        Catalogs as described by doc of ``load_grid_data()``.
+    platescale : float or None
+        Optional fixed plate scale in arcseconds per mm.
+    scale : float
+        Additional, dimensionless scale apply applied to every position.
+
+    Returns
+    -------
+    atrafo : (3, 3)-shaped array
+        Affine transformation applied to translate from focal plane
+        (real coordinates) to sky (field coordinates).
+    posnormscale : float
+        Scale in ``arcsecond`` for normalized positions.
+    positions : (N, 2)-shaped array
+        Dimensionless, normalized positions.
+    distortions : list of (N, 2)-shaped arrays
+        Distortions of each catalog in arcseconds.
+
+    Raises
+    ------
+    ValueError
+        If not all catalogs have the same reference grid
+        (field coordinates).
+    """
+    if not have_same_grid(cats):
+        raise ValueError("All catalogs are required to have"
+                         " the same reference grid.")
+
+    # get reference catalog
+    index = cats[0].index
+    refpos = cats[0].loc[index, ['x-field', 'y-field']].as_matrix()  # degree
+    refpos = refpos * scale  # apply additional scale
+    refpos = refpos * 3600   # convert degree to arcsec
+
+    # get distortions on sky
+    realpos = [df.loc[index, ['x-real', 'y-real']].as_matrix() for df in cats]
+    if platescale is not None:
+        atrafo = np.array([
+            [platescale * scale, 0,                  0],
+            [0,                  platescale * scale, 0],
+            [0,                  0,                  1]])
+    else:
+        atrafo = affine.affine_lstsq(realpos[0], refpos)
+    skypos = [affine.affine_trafo(rpos, atrafo) for rpos in realpos]
+    distortions = [spos - refpos for spos in skypos]
+
+    # normalize positions
+    posmin, posmax = np.min(refpos), np.max(refpos)
+    posscale = (posmax - posmin) / 2
+    posshift = (posmax + posmin) / 2
+    positions = refpos / posscale - posshift
+
+    return atrafo, posscale, positions, distortions
