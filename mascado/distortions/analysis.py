@@ -89,7 +89,7 @@ def analyze_contributions_over_order(
     """
     if maxorder is None:
         maxorder = vf.get_degree()
-    orders = list(range(minorder, maxorder))
+    orders = list(range(minorder, maxorder+1))
 
     gridside = np.linspace(-1, 1, gridsize)
     xx, yy = np.meshgrid(gridside, gridside, indexing='ij')
