@@ -4,8 +4,20 @@
 Package for analyzing geometric distortions of optical systems.  This
 software is meant for quick-look inspection of distortion data sets.
 
+Dependencies are
+
+  - Python3.5 or higher
+  - Matplotlib: e.g. `pip install matplotlib`
+  - NumPy: e.g. `pip install numpy`
+  - SciPy: e.g. `pip install scipy`
+  - pandas: e.g. `pip install pandas`
+
+Make sure that you are using the Python3 version of pip (explicitly
+`pip3 ...` or `python3 -m pip ...`) or `conda`, because otherwise the
+packages are not visible to the scripts.
+
 The documentation is available at https://tychons.net/mascado/  
-If you want to build it yourself, get Sphinx and run
+If you want to build the documentation yourself, get Sphinx and run
 
     $ make docupdate
     $ make docbuild
