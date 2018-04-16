@@ -7,8 +7,10 @@ software is meant for quick-look inspection of distortion data sets.
 Dependencies are
 
   - Python3.5 or higher
+    - 3.5 or higher needed for matrix multiplication operator (``@``)
   - Matplotlib: e.g. `pip install matplotlib`
-  - NumPy: e.g. `pip install numpy`
+  - NumPy >= 1.14: e.g. `pip install numpy=1.14`
+    - 1.14 or higher needed for ``encoding`` keyword to ``numpy.genfromtxt()``
   - SciPy: e.g. `pip install scipy`
   - pandas: e.g. `pip install pandas`
 

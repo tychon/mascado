@@ -25,9 +25,13 @@ def main():
         "--maxorder", type=int, default=5, metavar="MAXORDER")
     parser.add_argument(
         "--saveplot", metavar="PLOTFILE")
+    parser.add_argument(
+        "--encoding", default="latin1", metavar="ENCODING",
+        help="Encoding of Zemax file, e.g. latin1 or utf8."
+             " Defaults to latin1.")
     args = parser.parse_args()
 
-    df = zemax.load_grid_data(args.zemaxfile)
+    df = zemax.load_grid_data(args.zemaxfile, encoding=args.encoding)
     atrafo, posnormscale, positions, (distortions,) = \
         zemax.distortions_on_sky([df], scale=args.scale)
     print("Affine transform: focal plane (mm) -> reference grid (arcseconds):")

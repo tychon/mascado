@@ -4,12 +4,9 @@
 # Licensed under GPL-3.0-or-later.  See COPYING for details.
 
 
-import sys
 import argparse
-import numpy as np
 import matplotlib.pyplot as plt
 
-import mascado.utility.affine as affine
 import mascado.utility.zemax as zemax
 import mascado.utility.plotting as plotting
 
@@ -32,10 +29,14 @@ def main():
     parser.add_argument(
         "--saveplot", metavar="PLOTFILE",
         help="Save plot to file and don't show on screen.")
+    parser.add_argument(
+        "--encoding", default='latin1', metavar="ENCODING",
+        help="Encoding of both Zemax files, e.g. latin1 or utf8."
+             " Defaults to latin1.")
     args = parser.parse_args()
 
-    df1 = zemax.load_grid_data(args.zemaxfile1)
-    df2 = zemax.load_grid_data(args.zemaxfile2)
+    df1 = zemax.load_grid_data(args.zemaxfile1, encoding=args.encoding)
+    df2 = zemax.load_grid_data(args.zemaxfile2, encoding=args.encoding)
     atrafo, posnormscale, positions, (dis1, dis2) = \
         zemax.distortions_on_sky([df1, df2], scale=args.scale)
     print("Affine transform: focal plane (mm) -> reference grid (arcseconds):")

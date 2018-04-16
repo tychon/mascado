@@ -65,3 +65,7 @@ options.
 An example invocation would be::
 
   $ python -m scripts.analyze_grid --maxorder 6 "../Zemax Grids/ELT_MC20.TXT" --saveplot ../tmp/MC20.png
+
+If your exported Zemax file has a different encoding than Latin-1 (ISO
+8859-1), use the ``--encoding`` argument of the scripts.  Although
+UTF-8 and Latin-1 are indistinguishable for ASCII characters.
