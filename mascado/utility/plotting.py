@@ -105,7 +105,7 @@ def plot_distortions(ax, positions, distortions,
 def plot_residuals(fig, positions, residuals, inliers=None, limits=(-1.1, 1.1),
                    positionunits=(1, "normalized"),
                    arrowunits="arcsec", keylen=None,
-                   keypos=(1.3, 1.3), dotsize=1, **kwgridspec):
+                   keypos=(1.2, 1.2), dotsize=1, **kwgridspec):
     """Plot residual map with marginalized distributions.
 
     You pass a figure and keyword arguments to matplotlib.GridSpec to define
@@ -144,7 +144,7 @@ def plot_residuals(fig, positions, residuals, inliers=None, limits=(-1.1, 1.1),
     if inliers is None:
         inliers = np.full((positions.shape[0],), True)
 
-    gs = GridSpec(3, 3, width_ratios=[1, 3, 1], height_ratios=[1, 3, 1])
+    gs = GridSpec(3, 3, width_ratios=[1, 4, 1], height_ratios=[1, 4, 1])
     gs.update(**kwgridspec)
 
     ax = fig.add_subplot(gs[1, 1])
@@ -262,7 +262,7 @@ def make_grid_analysis(fig, positions, distortions, posscale, maxorder,
         fig, positions, residuals * 1e6,
         positionunits=(posscale, "arcsec"),
         arrowunits="uas",
-        left=0.52, right=0.9, bottom=0.52, top=0.9,
+        left=0.55, right=0.85, bottom=0.52, top=0.9,
         wspace=0.05, hspace=0.05)
     fig.text(0.72, 0.94,
              "Residual map of {:d}. order fit".format(maxorder),
