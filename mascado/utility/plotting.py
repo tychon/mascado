@@ -105,7 +105,7 @@ def plot_distortions(ax, positions, distortions,
 def plot_residuals(fig, positions, residuals, inliers=None, limits=(-1.1, 1.1),
                    positionunits=(1, "normalized"),
                    arrowunits="arcsec", keylen=None,
-                   keypos=(1.15, 1.3), dotsize=1, **kwgridspec):
+                   keypos=(1.3, 1.3), dotsize=1, **kwgridspec):
     """Plot residual map with marginalized distributions.
 
     You pass a figure and keyword arguments to matplotlib.GridSpec to define
@@ -151,40 +151,40 @@ def plot_residuals(fig, positions, residuals, inliers=None, limits=(-1.1, 1.1),
     plot_distortions(ax, positions, residuals, inliers, limits,
                      positionunits, None, arrowunits, keylen,
                      keypos, dotsize)
-    ax.tick_params(axis='both', which='both', right='on', top='on',
-                   labelleft='off', labelbottom='off')
+    ax.tick_params(axis='both', which='both', right=True, top=True,
+                   labelleft=False, labelbottom=False)
     ax.set_xlabel('')
     ax.set_ylabel('')
 
     axmargxdx = fig.add_subplot(gs[1, 0], sharey=ax)
-    axmargxdx.tick_params(axis='both', which='both', left='on', right='off',
-                          labelleft='on', labelright='off')
+    axmargxdx.tick_params(axis='both', which='both', left=True, right=False,
+                          labelleft=True, labelright=False)
     axmargxdx.scatter(residuals[inliers, 0], positions[inliers, 1] * ps,
                       s=dotsize**2, c='k', alpha=0.2)
     axmargxdx.set_ylabel("position / {:s}".format(positionunits[1]))
     axmargxdx.set_xlabel("res/{:s}".format(arrowunits))
 
     axmargxdy = fig.add_subplot(gs[1, 2], sharey=ax)
-    axmargxdy.tick_params(axis='both', which='both', left='off', right='on',
-                          labelleft='off', labelright='on',
-                          top='on', bottom='off',
-                          labeltop='on', labelbottom='off')
+    axmargxdy.tick_params(axis='both', which='both', left=False, right=True,
+                          labelleft=False, labelright=True,
+                          top=True, bottom=False,
+                          labeltop=True, labelbottom=False)
     axmargxdy.scatter(residuals[inliers, 1], positions[inliers, 1] * ps,
                       s=dotsize**2, c='k', alpha=0.2)
 
     axmargydx = fig.add_subplot(gs[0, 1], sharex=ax)
-    axmargydx.tick_params(axis='both', which='both', left='on', right='off',
-                          labelleft='on', labelright='off',
-                          top='on', bottom='off',
-                          labeltop='on', labelbottom='off')
+    axmargydx.tick_params(axis='both', which='both', left=True, right=False,
+                          labelleft=True, labelright=False,
+                          top=True, bottom=False,
+                          labeltop=True, labelbottom=False)
     axmargydx.scatter(positions[inliers, 0] * ps, residuals[inliers, 0],
                       s=dotsize**2, c='k', alpha=0.2)
 
     axmargydy = fig.add_subplot(gs[2, 1], sharex=ax)
-    axmargydy.tick_params(axis='both', which='both', left='off', right='on',
-                          labelleft='off', labelright='on',
-                          top='off', bottom='on',
-                          labeltop='off', labelbottom='on')
+    axmargydy.tick_params(axis='both', which='both', left=False, right=True,
+                          labelleft=False, labelright=True,
+                          top=False, bottom=True,
+                          labeltop=False, labelbottom=True)
     axmargydy.scatter(positions[inliers, 0] * ps, residuals[inliers, 1],
                       s=dotsize**2, c='k', alpha=0.2)
     axmargydy.set_xlabel("position / {:s}".format(positionunits[1]))
