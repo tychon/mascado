@@ -13,6 +13,9 @@ the scripts from the repository root using::
 Zemax Grid Distortion Data
 --------------------------
 
+Usage
+^^^^^
+
 In Zemax export distortions by clicking `Analysis` in the menu.  Then
 select `Miscellaneous` and `Grid Distortion`.  After a right click
 into the window, a dialog with setup options pops up.  Click on `Text`
@@ -69,3 +72,58 @@ An example invocation would be::
 If your exported Zemax file has a different encoding than Latin-1 (ISO
 8859-1), use the ``--encoding`` argument of the scripts.  Although
 UTF-8 and Latin-1 are indistinguishable for ASCII characters.
+
+Explanation
+^^^^^^^^^^^
+
+The output figure has four panels.  The upper left panel shows the
+distortions in sky coordinates after the affine transform.  The
+reference point in Zemax is irrelevant, because a least-squares
+solution is used to relate the detector to on-sky coordinates.  The
+upper right panel shows the residuals of the highest order fit and
+their marginalized distributions.  The arrow key is, similar to the
+first panel, twice the RMS of the residuals.  With simulation data the
+residuals often show small scale systematic patterns that may come
+from the accuracy of Zemax's simulations.
+
+The steps performed to obtain the polynomial fit are as follows:
+
+#. Read on-sky grid :math:`x_\text{ref}` and detector grid
+   :math:`x_\text{detector}` from data file.
+#. Compute affine transform :math:`A` from detector coordinates to sky
+   coordinates and apply: :math:`\hat x = A x_\text{detector}`.  (The
+   ``compare_grids`` script applies the same trafo to both input
+   grids.)
+#. The distortions are defined as :math:`d = \hat x - x_\text{ref}`.
+   The affine trafo was chosen in the previous step, such that the
+   distortions are minimal in the least-squares sense.  (The drift in
+   ``compare_grids`` is calculated by subtracting the two distortions
+   grids: :math:`d = d_2 - d_1`.)
+#. Normalize the reference positions :math:`x_\text{norm} =
+   x_\text{ref} / \text{scale} - \text{shift}` by a shift and a scale
+   into the domain :math:`[-1, 1]\times[-1, 1]`.  This normalization
+   is transparent in the script (you don't have to care about it) but
+   an important thing to remember when reusing the code.  The
+   magnitude of the distortions is not scaled.
+#. Fit a polynomial vector field :math:`P(x_\text{norm}) \approx d`.
+
+The lower two panels are scatter plots showing properties of the
+polynomial fit at different orders.  *Since the polynomial is used to
+fit the distortions only, the zeroth and first order terms are
+incomplete, because the affine transform was already removed.* The
+drift in ``compare_grids`` compares two distortion solutions after the
+same affine trafo, so the zeroth and first order terms have a
+significant interpretation that is only influenced by the scale of the
+affine trafo.
+
+The lower left panel shows the RMS of residuals :math:`(r_{x,i},
+r_{y,i})`, :math:`i=1...n`, calculated as
+
+.. math::
+   \operatorname{rms} r = \sqrt{\frac{\sum_i^n \left(r_{x,i}^2 + r_{y,i}^2\right)}{2 n}}
+     = \operatorname{rms}\{\operatorname{rms} r_x, \operatorname{rms} r_y\}
+
+The lower right panel shows the RMS of the distortions encoded by the
+terms of a specific order in the highest order fit.  It is calculated
+by setting the coefficients for all other terms to zero and evaluating
+the model on a regular :math:`100\times100` point grid.

@@ -211,6 +211,10 @@ def make_grid_analysis(fig, positions, distortions, posscale, maxorder,
     4. RMS power in each degree of polynomial of
        fit at `maxorder`.
 
+    Since an affine transformation was applied to calculate the distortions,
+    the zeroth and first order terms of the polynomial solution are incomplete
+    and are plotted with gray data points.
+
     Some information is printed to the console.
 
     Parameters
@@ -270,7 +274,14 @@ def make_grid_analysis(fig, positions, distortions, posscale, maxorder,
 
     # RMS residuals over max order
     ax3 = fig.add_subplot(gs[1, 0])
-    ax3.scatter(resrms.order, resrms.resrms * 1e6, marker='D')
+    ax3.scatter(
+        resrms.order[resrms.order <= 1],
+        resrms.resrms[resrms.order <= 1] * 1e6,
+        marker='D', color='silver')
+    ax3.scatter(
+        resrms.order[resrms.order > 1],
+        resrms.resrms[resrms.order > 1] * 1e6,
+        marker='D')
     vmin = 0.6 * np.min(resrms.resrms * 1e6)
     vmax = 1.4 * np.max(resrms.resrms * 1e6)
     ax3.set_ylim(vmin, vmax)
@@ -281,7 +292,14 @@ def make_grid_analysis(fig, positions, distortions, posscale, maxorder,
 
     # RMS per individual order of max order fit
     ax4 = fig.add_subplot(gs[1, 1])
-    ax4.scatter(modelrms.order, modelrms.modelrms * 1e6, marker='D')
+    ax4.scatter(
+        modelrms.order[modelrms.order <= 1],
+        modelrms.modelrms[modelrms.order <= 1] * 1e6,
+        marker='D', color='silver')
+    ax4.scatter(
+        modelrms.order[modelrms.order > 1],
+        modelrms.modelrms[modelrms.order > 1] * 1e6,
+        marker='D')
     vmin = 0.7 * np.min(modelrms.modelrms * 1e6)
     vmax = 1.5 * np.max(modelrms.modelrms * 1e6)
     # cut off for small values, indicate with downward arrow
