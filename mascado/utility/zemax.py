@@ -53,6 +53,71 @@ def load_grid_data(fname, encoding='latin1', footer=7, nonsquareokay=False):
     return df
 
 
+def load_grid_data_B(fname, encoding='latin1', nonsquareokay=False):
+    """
+    Parameters
+    ----------
+    fname : string
+        File name.
+    encoding : string
+        File encoding, defaults to ``latin1``.
+    nonsquareokay : bol
+        Complain if the number of points in the data set is not
+        a square number.
+
+    Returns
+    -------
+    pandas.DataFrame
+        DataFrame with 5 columns: n (running number),
+        x-field (degree), y-field (degree), x-real (mm), y-real (mm).
+
+    Raises
+    ------
+    ValueError
+        If the number of points is not a square number and
+        ``nonsquareokay`` is ``False``.
+    """
+    data = np.genfromtxt(
+        fname, encoding=encoding,
+        skip_header=8)
+    if nonsquareokay and data.shape[0]**0.5 % 1 != 0:
+        raise ValueError("Input file does not contain square number of"
+                         " data points: "+fname)
+    df = pd.DataFrame(data, columns=[
+        'n', 'x-field', 'y-field', 'x-real', 'y-real'])
+    return df
+
+
+def load_grid_data_variant(variantkey, fname, **kwargs):
+    """Load distortion data from files in various formats.
+
+    Scripts and macros in Zemax produce different outputs that may be
+    added here as input format variants for convenience.  Different
+    variants are enumerated by upper case letters, where ``A`` is the
+    default Zemax Grid Distortion export file.
+
+    Parameters
+    ----------
+    variantkey : str
+        Upper case letter denoting format variant.
+    fname : str
+        Path to input file.
+    kwargs : keyword arguments
+        Additional arguments for format loaders.
+
+    Returns
+    -------
+    :class:`pandas.DataFrame`
+        Which should have at least the columns:
+        x-field (degree), y-field (degree), x-real (mm), y-real (mm).
+        Check variant loader documentations.
+    """
+    if variantkey == 'A':
+        return load_grid_data(fname, **kwargs)
+    if variantkey == 'B':
+        return load_grid_data_B(fname, **kwargs)
+
+
 def have_same_grid(cats):
     """Check if all grid catalogs have the same grid in field coordinates.
 

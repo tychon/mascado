@@ -73,6 +73,7 @@ If your exported Zemax file has a different encoding than Latin-1 (ISO
 8859-1), use the ``--encoding`` argument of the scripts.  Although
 UTF-8 and Latin-1 are indistinguishable for ASCII characters.
 
+
 Explanation
 ^^^^^^^^^^^
 
@@ -129,3 +130,32 @@ The lower right panel shows the RMS of the distortions encoded by the
 terms of a specific order in the highest order fit.  It is calculated
 by setting the coefficients for all other terms to zero and evaluating
 the model on a regular :math:`100\times100` point grid.
+
+
+Input Format Variants
+^^^^^^^^^^^^^^^^^^^^^
+
+Scripts and macros in Zemax might produce different outputs, so some
+slightly different formats might be implemented over time.  Currently
+there is one variant additional to the default format.
+
+The format variant can be chosen using the ``--format LETTER``
+argument.
+
+Variant B::
+
+  Executing PATH
+  start
+  A -7.44068E+005
+  B 1.70508E-003
+  C -3.78466E-005
+  D -7.50941E+005
+  EFFL  -6.31490E+005   mm
+         Npoint         Input_X deg     Input_Y         Distorted_X mm          Distorted_Y
+  1.00000E+000 -7.49999E-003  -7.49995E-003  9.44980E+001  9.66661E+001
+  2.00000E+000 -7.49993E-003  -6.74997E-003  9.47787E+001  8.72730E+001
+  ...
+
+In most cases the exact content of non-tabular lines is ignored,
+because only a specific number of lines is skipped in the beginning
+and end.

@@ -22,6 +22,10 @@ def main():
         "zemaxfile2", metavar="GRIDDATA2",
         help="Path to Grid Distortion Data exported from Zemax as TXT file.")
     parser.add_argument(
+        "--format", type=str, default='A', metavar='LETTER',
+        help="Key for input format of file.  Defaults to 'A' for Zemax"
+             " exports of Grid Data.")
+    parser.add_argument(
         "--scale", type=float, default=1, metavar="SCALE",
         help="Plate scale for undistorted grid.")
     parser.add_argument(
@@ -39,8 +43,10 @@ def main():
              " Defaults to latin1.")
     args = parser.parse_args()
 
-    df1 = zemax.load_grid_data(args.zemaxfile1, encoding=args.encoding)
-    df2 = zemax.load_grid_data(args.zemaxfile2, encoding=args.encoding)
+    df1 = zemax.load_grid_data_variant(
+        args.format, args.zemaxfile1, encoding=args.encoding)
+    df2 = zemax.load_grid_data_variant(
+        args.format, args.zemaxfile2, encoding=args.encoding)
     atrafo, posnormscale, positions, (dis1, dis2) = \
         zemax.distortions_on_sky([df1, df2], scale=args.scale)
     print("Affine transform: focal plane (mm) -> reference grid (arcseconds):")
