@@ -103,8 +103,10 @@ The steps performed to obtain the polynomial fit are as follows:
    x_\text{ref} / \text{scale} - \text{shift}` by a shift and a scale
    into the domain :math:`[-1, 1]\times[-1, 1]`.  This normalization
    is transparent in the script (you don't have to care about it) but
-   an important thing to remember when reusing the code.  The
-   magnitude of the distortions is not scaled.
+   an important thing to remember when reusing the code.  The offset
+   of the normalization is not restored, such that the resulting field
+   is always centered on :math:`(0, 0)`.  The magnitude of the
+   distortions is not scaled during calculations.
 #. Fit a polynomial vector field :math:`P(x_\text{norm}) \approx d`.
 
 The lower two panels are scatter plots showing properties of the

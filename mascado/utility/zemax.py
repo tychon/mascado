@@ -72,7 +72,7 @@ def have_same_grid(cats):
 
 
 def distortions_on_sky(cats, platescale=None, scale=1):
-    """Get distortions and normalized positions on-sky.
+    r"""Get distortions and normalized positions on-sky.
 
     By default, an affine transform is used for the transformation
     from focal plane to sky.  The affine transform is the
@@ -80,6 +80,9 @@ def distortions_on_sky(cats, platescale=None, scale=1):
     applied to all catalogs, so that a drift in linear terms is
     conserved.  If ``platescale`` is passed, no affine transform, but
     a fixed scale is used.
+
+    Normalized positions are calculated by shifting and scaling the
+    position catalog into the domain :math:`[-1, 1]\times[-1, 1]`.
 
     Parameters
     ----------
@@ -134,6 +137,6 @@ def distortions_on_sky(cats, platescale=None, scale=1):
     posmin, posmax = np.min(refpos), np.max(refpos)
     posscale = (posmax - posmin) / 2
     posshift = (posmax + posmin) / 2
-    positions = refpos / posscale - posshift
+    positions = (refpos - posshift) / posscale
 
     return atrafo, posscale, positions, distortions
