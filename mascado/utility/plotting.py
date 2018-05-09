@@ -198,7 +198,8 @@ def plot_residuals(fig, positions, residuals, inliers=None, limits=(-1.1, 1.1),
 
 
 def make_grid_analysis(fig, positions, distortions, posscale, maxorder,
-                       minorder=0, name="distortions", poly=Legendre):
+                       minorder=0, name="distortions", poly=Legendre,
+                       maxcondition=1e2):
     """Run analysis of distortion pattern and display in four panels.
 
     The four panels are:
@@ -235,13 +236,14 @@ def make_grid_analysis(fig, positions, distortions, posscale, maxorder,
         (eg. ``"drift"`` for distortions difference).
     """
     resrms = analysis.analyze_residuals_over_order(
-        positions, distortions, maxorder,
-        poly=poly, minorder=0, info='')
+        positions, distortions, maxorder, poly=poly, minorder=0,
+        maxcondition=maxcondition, info='')
 
     print()
     print("In {:d}. order {:s} fit:".format(maxorder, poly.__name__))
     vf = PolyVectorField(poly(maxorder))
-    params, residuals, _ = polyfit_svd(vf, positions, distortions)
+    params, residuals, _ = polyfit_svd(vf, positions, distortions,
+                                       maxcondition=maxcondition)
     vf.set_params(params)
     modelrms = analysis.analyze_contributions_over_order(vf)
 

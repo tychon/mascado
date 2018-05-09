@@ -8,7 +8,7 @@ from mascado.distortions.polyfit import polyfit_svd
 
 def analyze_residuals_over_order(
         positions, distortions, maxorder, minorder=0, poly=Legendre,
-        distortionunits="arcseconds", info='  '):
+        distortionunits="arcseconds", maxcondition=1e2, info='  '):
     """Get RMS of residuals after nth order fit.
 
     Parameters
@@ -45,7 +45,7 @@ def analyze_residuals_over_order(
                 info, order, poly.__name__))
         vf = PolyVectorField(Legendre(order))
         _, residuals, _ = polyfit_svd(vf, positions, distortions,
-                                      info=subinfo)
+                                      maxcondition=maxcondition, info=subinfo)
         resrms = np.sqrt(np.sum(residuals**2)/residuals.size)
         rmsperorder.append(resrms)
         if info is not False:

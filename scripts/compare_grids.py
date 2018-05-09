@@ -27,8 +27,12 @@ def main():
     parser.add_argument(
         "--maxorder", type=int, default=5, metavar="MAXORDER")
     parser.add_argument(
+        "--maxcondition", type=float, default=1e2, metavar="FLOAT",
+        help="Maximum value of condition number for SVD.")
+    parser.add_argument(
         "--saveplot", metavar="PLOTFILE",
-        help="Save plot to file and don't show on screen.")
+        help="Path to image file where plot will be saved instead of"
+             " being displayed.")
     parser.add_argument(
         "--encoding", default='latin1', metavar="ENCODING",
         help="Encoding of both Zemax files, e.g. latin1 or utf8."
@@ -49,8 +53,9 @@ def main():
 
     plotting.set_fontsize(medium=9)
     fig = plt.figure(figsize=(8*1.3, 6*1.3))
-    plotting.make_grid_analysis(fig, positions, drift,
-                                posnormscale, args.maxorder, name="drift")
+    plotting.make_grid_analysis(
+        fig, positions, drift, posnormscale, args.maxorder,
+        maxcondition=args.maxcondition, name="drift")
     if args.saveplot:
         print()
         print("Writing plot to", args.saveplot)
