@@ -159,3 +159,32 @@ Variant B::
 In most cases the exact content of non-tabular lines is ignored,
 because only a specific number of lines is skipped in the beginning
 and end.
+
+
+Power Spectra
+-------------
+
+With the additional argument ``--psd`` to one of the scripts a second
+figure with another four panels is created and displayed after closing
+the first figure.  By supplying ``--savepsdplot``, displaying the plot
+is suppressed but it is written to an image file.
+
+The upper two panels contain the unbinned 2D power spectrum for the x-
+and y-components of the vector field with logarithmic color bar and an
+arbitrary linear power unit.  The lower left panel shows the binned
+power spectra.  The lower right panel displays the cumulative version
+of the lower left panel, where the distributions in x- and y-direction
+are expressed relative to the total power.
+
+The "critically sampling pinhole spacing" is the maximum spacing for a
+pinhole grid covering the FOV for which the corresponding frequency
+critically sampled.  For example the offset needs only one point, so
+an infinite spacing is enough.  The first frequency is one oscillation
+across the FOV which needs two points, so the maximum spacing is
+FOV/2.
+
+**Please take the results of the PSD with a grain of salt,** because
+we are working with Polynomial vector fields, which are usually not
+band-limited with respect to the chosen sampling.  Therefore, even
+when the cumulative PSD plot shows 100%, some information is lost.
+Additionally, **no window function is used!**

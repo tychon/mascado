@@ -10,10 +10,12 @@ import matplotlib.pyplot as plt
 
 from matplotlib.gridspec import GridSpec
 from matplotlib.ticker import MaxNLocator
+from matplotlib.colors import LogNorm
 
 from mascado.distortions.polynomials import PolyVectorField, Legendre
 from mascado.distortions.polyfit import polyfit_svd
 import mascado.distortions.analysis as analysis
+import mascado.distortions.powerspectrum as psd
 
 
 def set_fontsize(small=8, medium=10, bigger=12):
@@ -220,7 +222,7 @@ def make_grid_analysis(fig, positions, distortions, posscale, maxorder,
 
     Parameters
     ----------
-    fig : matplotlib.Axes
+    fig : matplotlib.figure.Figure
         Target figure.
     positions : (N,2)-shaped array
         Position grid in normalized coordinates,
@@ -234,6 +236,11 @@ def make_grid_analysis(fig, positions, distortions, posscale, maxorder,
     name : str
         Name of distortions in plots
         (eg. ``"drift"`` for distortions difference).
+
+    Returns
+    -------
+    vf : :class:`mascado.distortions.polynomials.PolyVectorField`
+        Fitted 2D vector field of ``maxorder``.
     """
     resrms = analysis.analyze_residuals_over_order(
         positions, distortions, maxorder, poly=poly, minorder=0,
@@ -319,3 +326,141 @@ def make_grid_analysis(fig, positions, distortions, posscale, maxorder,
     ax4.set_ylabel("RMS of "+uncapname+" model / uas")
     ax4.set_xlabel("total degree of terms in {:d}. order fit".format(maxorder))
     ax4.xaxis.set_major_locator(MaxNLocator(integer=True))
+
+    return vf
+
+
+def plot_spectrum(ax, spectrum, smin, smax, caption):
+    """Plot power spectrum as image with correct frequency scale.
+
+    Parameters
+    ----------
+    ax : matplotlib.Axes
+        Target axes for plotting
+    spectrum : (N, N)-shaped float array
+        Power spectrum
+    smin, smax : float
+        Minimum and maximum values for color map.
+    caption : str
+        Plot title
+
+    Returns
+    -------
+    im
+        matplotlib imshow result
+    """
+    fmin, fmax = -spectrum.shape[0]//2+1, spectrum.shape[0]//2
+    im = ax.imshow(spectrum.T, origin='lower', cmap='Purples',
+                   norm=LogNorm(vmin=smin, vmax=smax),
+                   extent=(fmin-0.5, fmax+0.5, fmin-0.5, fmax+0.5))
+    ax.text(0.5, 1.05, caption, horizontalalignment='center',
+            transform=ax.transAxes)
+    ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+    ax.set_xlabel("spatial frequency [1/FOV]")
+    ax.set_ylabel("spatial frequency [1/FOV]")
+    return im
+
+
+def make_psd_analysis(fig, vf, posscale, name="distortions"):
+    """Run analysis of power spectrum of distortion pattern.
+
+    The figure is filled with four panels and one colorbar.  The upper
+    two panels contain the unbinned 2D power spectrum for the x- and
+    y-components of the vector field with logarithmic colorbar.
+
+    The lower left panel shows the binned power spectra and the lower
+    right panel the cumulative version of the lower left panel.
+
+    Units on the power are unituitive and not clear.
+    At least to the present me.
+
+    Parameters
+    ----------
+    fig : matplotlib.figure.Figure
+        Target figure.
+    vf : :class:`mascado.distortions.polynomials.PolyVectorField`
+        Vector field to analyze.
+    posscale : float
+        Scale to convert from normalized coordinates to arcseconds.
+    name : str
+        Meta-name of data.
+
+    """
+    print()
+    print("Calculating PSD...")
+    sxx, syy = psd.psd_spectrums(vf, posscale)
+    fx, fy = psd.psd_histogram(sxx), psd.psd_histogram(syy)
+    fxc = psd.psd_histogram_cumulative(sxx)
+    fyc = psd.psd_histogram_cumulative(syy)
+    fxc = ((fxc - fxc[0]) / (fxc[-1] - fxc[0]))
+    fyc = ((fyc - fyc[0]) / (fyc[-1] - fyc[0]))
+
+    gs = GridSpec(2, 3, width_ratios=[2, 2, 0.2], height_ratios=[2, 2])
+    gs.update(left=0.08, right=0.92, bottom=0.07, top=0.95,
+              wspace=0.3, hspace=0.3)
+
+    smax = max(np.max(sxx), np.max(syy))
+    # lower limit: lower limit of spectrum
+    # or at least down to 0.1 or at least 3 decades
+    smin = max(min(0.1,
+                   10**np.floor(np.log10(smax/1.1e2))),
+               min(np.min(sxx),
+                   np.min(syy)))
+    ax1 = fig.add_subplot(gs[0, 0])
+    im = plot_spectrum(ax1, sxx, smin, smax,
+                       name[:1].upper() + name[1:] + " x-component")
+    ax2 = fig.add_subplot(gs[0, 1])
+    im = plot_spectrum(ax2, syy, smin, smax,
+                       name[:1].upper() + name[1:] + " y-component")
+    cax = fig.add_subplot(gs[0, 2])
+    color = fig.colorbar(im, cax=cax, orientation='vertical')
+    color.set_label("power")
+
+    # histogram
+    ax3 = fig.add_subplot(gs[1, 0])
+    ax3.plot(fx, '.-', label="x-component")
+    ax3.plot(fy, '.-', label="y-component")
+    ax3.set_xlim(-0.5, fx.size-0.5)
+    ax3.set_ylim(0, max(np.max(fx), np.max(fy))*1.1)
+    ax3.xaxis.set_major_locator(MaxNLocator(integer=True))
+    ax3.set_xlabel("spatial frequency [1/FOV]")
+    ax3.set_ylabel("power")
+    ax3.legend(loc='upper right')
+    ax3t = ax3.twiny()
+    ax3t.set_xlim([-0.5/(2*posscale), (fx.size-0.5)/(2*posscale)])
+    ax3t.set_xlabel("spatial frequency [1/arcsec]", labelpad=5)
+
+    # cumulative histogram
+    ax4 = fig.add_subplot(gs[1, 1])
+
+    def hline(hpos, text):
+        ax4.axhline(hpos, color='gainsboro', zorder=0)
+        ax4.text((fxc.size-0.7)/(2*posscale), hpos-5, text,
+                 color='gainsboro', horizontalalignment='right')
+    hline(50, "50% = -3dB loss")
+    hline(75, "25% = -6dB loss")
+    hline(90, "10% = -10dB loss")
+    # hline(99, "1% = -20dB loss") # don't trust this
+    hline(100, "no loss")
+
+    ax4.plot(np.arange(fxc.size)/(2*posscale), fxc * 100, '.-',
+             label="x-component")
+    ax4.plot(np.arange(fxc.size)/(2*posscale), fyc * 100, '.-',
+             label="y-component")
+    ax4.set_xlim(0, (fxc.size-0.5)/(2*posscale))
+    ax4.set_ylim(0, 102)
+    ax4.xaxis.set_major_locator(MaxNLocator(integer=True))
+    ax4.set_xlabel("spatial frequency [1/arcsec]")
+    ax4.set_ylabel("relative cumulative power [%]")
+    ax4.legend(loc='lower right')
+
+    # critically sampling pinhole spacing
+    ticks = np.arange(fxc.size)[2::2]/(2*posscale)
+    ticklabels = ["{:.3g}".format(0.5/freq) for freq in ticks]
+    ax4t = ax4.twiny()
+    ax4t.set_xticks(list(ticks)+[0])
+    ax4t.set_xticklabels(ticklabels+[r'$\infty$'])
+    ax4t.set_xlim(0, (fxc.size-0.5)/(2*posscale))
+    ax4t.set_xlabel("critically sampling pinhole spacing [arcsec]",
+                    labelpad=5)

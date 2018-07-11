@@ -34,9 +34,17 @@ def main():
         "--maxcondition", type=float, default=1e2, metavar="FLOAT",
         help="Maximum value of condition number for SVD.")
     parser.add_argument(
+        "--psd", action='store_true',
+        help="Show second plot window with fourier transforms and"
+             " PSD of distortion pattern.")
+    parser.add_argument(
         "--saveplot", metavar="PLOTFILE",
         help="Path to image file where plot will be saved instead of"
              " being displayed.")
+    parser.add_argument(
+        "--savepsdplot", metavar="IMGFILE",
+        help="Path to image file where plot of fourier transforms and PSD will"
+             " be saved.")
     parser.add_argument(
         "--encoding", default='latin1', metavar="ENCODING",
         help="Encoding of both Zemax files, e.g. latin1 or utf8."
@@ -59,7 +67,7 @@ def main():
 
     plotting.set_fontsize(medium=9)
     fig = plt.figure(figsize=(8*1.3, 6*1.3))
-    plotting.make_grid_analysis(
+    vf = plotting.make_grid_analysis(
         fig, positions, drift, posnormscale, args.maxorder,
         maxcondition=args.maxcondition, name="drift")
     if args.saveplot:
@@ -69,6 +77,16 @@ def main():
     else:
         plt.show()
     plt.close()
+
+    if args.psd or args.savepsdplot:
+        fig = plt.figure(figsize=(8*1.3, 6*1.3))
+        plotting.make_psd_analysis(fig, vf, posnormscale, name="drift")
+    if args.psd and not args.savepsdplot:
+        plt.show()
+    if args.savepsdplot:
+        print()
+        print("Writing PSD plot to", args.savepsdplot)
+        plt.savefig(args.savepsdplot, dpi=150)
 
 
 if __name__ == '__main__':

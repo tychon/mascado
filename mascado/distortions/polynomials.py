@@ -352,7 +352,7 @@ class PolyVectorField:
 
         Returns
         -------
-        PolyVectorField
+        :class:`mascado.distortions.polynomials.PolyVectorField`
             New vector field.
         """
         return PolyVectorField(self.xpoly.copy(),
