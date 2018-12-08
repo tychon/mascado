@@ -52,7 +52,7 @@ def main():
         args.format, args.zemaxfile, encoding=args.encoding)
     atrafo, posnormscale, positions, (distortions,) = \
         zemax.distortions_on_sky([df], scale=args.scale)
-    print("Affine transform: focal plane (mm) -> reference grid (arcseconds):")
+    print("Affine transform: focal plane -> reference grid (arcseconds):")
     print(atrafo)
     print()
 

@@ -137,7 +137,11 @@ Input Format Variants
 
 Scripts and macros in Zemax might produce different outputs, so some
 slightly different formats might be implemented over time.  Currently
-there is one variant additional to the default format.
+there are two variants additional to the default format.
+
+In most cases the exact content of non-tabular lines is ignored,
+because only a specific number of lines is skipped in the beginning
+and end.
 
 The format variant can be chosen using the ``--format LETTER``
 argument.
@@ -156,10 +160,14 @@ Variant B::
   2.00000E+000 -7.49993E-003  -6.74997E-003  9.47787E+001  8.72730E+001
   ...
 
-In most cases the exact content of non-tabular lines is ignored,
-because only a specific number of lines is skipped in the beginning
-and end.
+Variant C::
 
+  X_error[deg],     Y_error[deg],     X_perfect[deg],      Y_perfect[deg],    X_FP_dist[mm],    Y_FP_dist[mm]
+   -0.00749242   -0.00749241   -0.00749243   -0.00749243        96.782     99.0399
+   -0.00749243   -0.00699296   -0.00749243   -0.00699293        96.981       92.63
+   -0.00749243   -0.00649344   -0.00749243   -0.00649343       97.1762     86.2092
+
+which will compare ``X_error,Y_error`` against ``X_FP_dist,Y_FP_dist``.
 
 Power Spectra
 -------------

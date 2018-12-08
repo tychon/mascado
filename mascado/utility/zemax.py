@@ -88,6 +88,45 @@ def load_grid_data_B(fname, encoding='latin1', nonsquareokay=False):
     return df
 
 
+def load_grid_data_C(fname, encoding='latin1', nonsquareokay=False):
+    """
+    Parameters
+    ----------
+    fname : string
+        File name.
+    encoding : string
+        File encoding, defaults to ``latin1``.
+    nonsquareokay : bol
+        Complain if the number of points in the data set is not
+        a square number.
+
+    Returns
+    -------
+    pandas.DataFrame
+        DataFrame with 6 columns:
+        x-field (degree), y-field (degree),
+        x-predicted (degree), y-predicted (degree).
+        x-real (mm), y-real (mm).
+
+    Raises
+    ------
+    ValueError
+        If the number of points is not a square number and
+        ``nonsquareokay`` is ``False``.
+    """
+    data = np.genfromtxt(
+        fname, encoding=encoding,
+        skip_header=1)
+    if nonsquareokay and data.shape[0]**0.5 % 1 != 0:
+        raise ValueError("Input file does not contain square number of"
+                         " data points: "+fname)
+    df = pd.DataFrame(data, columns=[
+        'x-field', 'y-field',
+        'x-predicted', 'y-predicted',
+        'x-real', 'y-real'])
+    return df
+
+
 def load_grid_data_variant(variantkey, fname, **kwargs):
     """Load distortion data from files in various formats.
 
@@ -116,6 +155,9 @@ def load_grid_data_variant(variantkey, fname, **kwargs):
         return load_grid_data(fname, **kwargs)
     if variantkey == 'B':
         return load_grid_data_B(fname, **kwargs)
+    if variantkey == 'C':
+        return load_grid_data_C(fname, **kwargs)
+    raise ValueError('Unknown format key "{}".'.format(variantkey))
 
 
 def have_same_grid(cats):
