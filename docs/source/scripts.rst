@@ -4,10 +4,11 @@ User Scripts
 
 In the ``./scripts`` directory of the repository you can find several
 scripts for various tasks.  Since they are using the ``mascado``
-module, you have to make that available in your python path, or run
-the scripts from the repository root using::
+module, you have to make that available in your python path (for
+example by installing the package via ``setup.py``), or run the
+scripts from the repository root using::
 
-  $ python3 -m scripts.SCRIPTNAME ARGS...
+  $ scripts/SCRIPTNAME ARGS...
 
 
 Zemax Grid Distortion Data
