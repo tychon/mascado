@@ -123,14 +123,14 @@ def affine_lstsq_cat(origin, target, x='x', y='y', ignore_index=False):
     if ignore_index:
         if origin.shape[0] != target.shape[0]:
             raise ValueError("Cannot merge catalogs of different length.")
-        origin = origin.loc[:, [x, y]].as_matrix()
-        target = target.loc[:, [x, y]].as_matrix()
+        origin = origin.loc[:, [x, y]].values
+        target = target.loc[:, [x, y]].values
     else:
         if not origin.index.equals(target.index):
             raise ValueError("Cannot merge on unequal indices.")
         idx = origin.index
-        origin = origin.loc[idx, [x, y]].as_matrix()
-        target = target.loc[idx, [x, y]].as_matrix()
+        origin = origin.loc[idx, [x, y]].values
+        target = target.loc[idx, [x, y]].values
     return affine_lstsq(origin, target)
 
 
@@ -209,6 +209,6 @@ def affine_trafo_cat(cat, trafo, x='x', y='y'):
     B  4  1   Bert
     C  5  4  Chris
     """
-    points = cat.loc[:, [x, y]].as_matrix()
+    points = cat.loc[:, [x, y]].values
     points = affine_trafo(points, trafo)
     return pd.DataFrame(points, index=cat.index, columns=[x, y])

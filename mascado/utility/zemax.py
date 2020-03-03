@@ -70,6 +70,7 @@ def load_grid_data_B(fname, encoding='latin1', nonsquareokay=False):
     pandas.DataFrame
         DataFrame with 5 columns: n (running number),
         x-field (degree), y-field (degree), x-real (mm), y-real (mm).
+        Remaining columns are dropped.
 
     Raises
     ------
@@ -83,7 +84,7 @@ def load_grid_data_B(fname, encoding='latin1', nonsquareokay=False):
     if nonsquareokay and data.shape[0]**0.5 % 1 != 0:
         raise ValueError("Input file does not contain square number of"
                          " data points: "+fname)
-    df = pd.DataFrame(data, columns=[
+    df = pd.DataFrame(data[:, :5], columns=[
         'n', 'x-field', 'y-field', 'x-real', 'y-real'])
     return df
 
@@ -224,12 +225,12 @@ def distortions_on_sky(cats, platescale=None, scale=1):
 
     # get reference catalog
     index = cats[0].index
-    refpos = cats[0].loc[index, ['x-field', 'y-field']].as_matrix()  # degree
+    refpos = cats[0].loc[index, ['x-field', 'y-field']].values  # degree
     refpos = refpos * scale  # apply additional scale
     refpos = refpos * 3600   # convert degree to arcsec
 
     # get distortions on sky
-    realpos = [df.loc[index, ['x-real', 'y-real']].as_matrix() for df in cats]
+    realpos = [df.loc[index, ['x-real', 'y-real']].values for df in cats]
     if platescale is not None:
         atrafo = np.array([
             [platescale * scale, 0,                  0],
