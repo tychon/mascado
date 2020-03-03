@@ -49,7 +49,7 @@ like::
   
   SMIA TV Distortion -0.0011%
 
-The ``scripts.analyze_grid`` and ``scripts.compare_grids`` scripts
+The ``mascado_analyze`` and ``mascado_compare`` scripts
 read these files and use the ``X-Field``, ``Y-Field``, ``Real X``, and
 ``Real Y`` columns to calculate properties of the distortion pattern.
 The plate scale from Zemax is not used, but an affine transformation,
@@ -67,7 +67,7 @@ options.
 
 An example invocation would be::
 
-  $ python -m scripts.analyze_grid --maxorder 6 "../Zemax Grids/ELT_MC20.TXT" --saveplot ../tmp/MC20.png
+  $ mascado_analyze --maxorder 6 "../Zemax Grids/ELT_MC20.TXT" --saveplot ../tmp/MC20.png
 
 If your exported Zemax file has a different encoding than Latin-1 (ISO
 8859-1), use the ``--encoding`` argument of the scripts.  Although
