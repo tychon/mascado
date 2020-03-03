@@ -43,7 +43,7 @@ def analyze_residuals_over_order(
         if info is not False:
             print("{:s}Fitting {:d}. order {:s} polynomial".format(
                 info, order, poly.__name__))
-        vf = PolyVectorField(Legendre(order))
+        vf = PolyVectorField(poly(order))
         _, residuals, _ = polyfit_svd(vf, positions, distortions,
                                       maxcondition=maxcondition, info=subinfo)
         resrms = np.sqrt(np.sum(residuals**2)/residuals.size)
