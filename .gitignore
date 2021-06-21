@@ -6,3 +6,5 @@ docs/source/mascado*
 build/
 dist/
 MASCADO\.egg*
+.idea
+.coverage
