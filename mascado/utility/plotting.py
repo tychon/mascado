@@ -133,7 +133,12 @@ def plot_residuals(fig, positions, residuals, inliers=None, limits=(-1.1, 1.1),
 
     Examples
     --------
-
+    >>> import matplotlib.pyplot as plt
+    >>> positions = np.array([[0,0],[1,1],[1,0],[0,1]], dtype=float)
+    >>> residuals = np.array([[0,0],[1,1],[1,0],[0,1]], dtype=float)
+    >>> posscale = 1.
+    >>>
+    >>> fig=plt.figure()
     >>> plot_residuals(
     ...     fig, positions, residuals * 1e6,
     ...     positionunits=(posscale, "arcsec"),

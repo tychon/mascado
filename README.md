@@ -58,6 +58,11 @@ or
 
     $ make test
 
+## Contributing
+
+- Codestyle: PEP8 with some exceptions: 
+  - Maximum Line length 
+  - 
 
 ## License
 
