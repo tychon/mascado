@@ -18,8 +18,9 @@ tells you where exactly.
 
 Dependencies are
 
-  - Python3.5 or higher
+  - Python3.6 or higher
     - 3.5 or higher needed for matrix multiplication operator (``@``)
+    - 3.6 for f-strings
   - Matplotlib
   - NumPy >= 1.14
     - 1.14 or higher needed for ``encoding`` keyword to ``numpy.genfromtxt()``
