@@ -44,9 +44,13 @@ Then open `./docs/build/html/index.html`.
 
 
 ## Tests
+All available inspections and tests can be run via tox.
+
+    $ pip/conda install tox  # in case its not installed 
+    $ tox
 
 There are a few unit tests for the package, though not nearly
-extensive.  Run with
+extensive. Tests can be run with
 
     $ python -m unittest discover --start-directory tests
 
