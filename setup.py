@@ -23,5 +23,6 @@ setup(
     scripts=[
         'scripts/mascado_analyze',
         'scripts/mascado_compare'],
+    package_data={'mascado': ['resources/example_input/*']},
     test_suite='tests',
 )
