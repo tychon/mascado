@@ -68,7 +68,10 @@ or
   old version if it does not exist yet.
 
 - Before merging a pull-request, make sure that at least one other person has reviewed or at least
-  sanity checked the changes. 
+  sanity checked the changes.
+  
+- Unless traffic in this repo increases dramatically don't squash changes before merging. Merged branches can 
+  be deleted
 
 ### Codestyle
 
@@ -83,6 +86,10 @@ or
 
 ###v1.0
 Initial release
+
+### unreleased Changes
+
+- (example) Testdata available as package resources: `mascado.resources.example_files`
 
 ## License
 
