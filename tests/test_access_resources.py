@@ -7,7 +7,8 @@ class TestAccess (TestCase):
     def test_examples(self):
         affine_example = 'affine_example.txt'
         distorted_example = 'distorted_example.txt'
-        resource_names = contents('mascado.resources.example_input')
+        resource_names = list(contents('mascado.resources.example_input'))
+
         assert affine_example in resource_names
         assert distorted_example in resource_names
 
