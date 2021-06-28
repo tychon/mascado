@@ -62,7 +62,12 @@ or
 
     $ make test
 
+## Development workflow/Contributing
 
+- Ensure changes conform to coding style and don't break anything by running the test cases, pylint, mypy and flake8. 
+  This can be done in one go in an isolated environment. Just run `tox`.
+  Add `-p auto` to parallelize for all test-environments, `-e py<yourversion>` to only test against a single version of python.
+  
 ## License
 
 Copyright 2018 Hannes Riechert <hannes@tychons.net>  
