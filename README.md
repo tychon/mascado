@@ -61,8 +61,6 @@ or
 ## Development workflow/Contributing
 
 - Ensure changes conform to coding style and don't break anything by running the test cases, pylint, mypy and flake8. 
-  This can be done in one go in an isolated environment. Just run `tox`. Add `-p auto` to parallelize for 
-  all test-environments, `-e py<yourversion>` to only test against a single version of python.
   
 - Do not merge user-visible changes without documenting them in the changelog. Also create/request a release from the
   old version if it does not exist yet.
@@ -70,14 +68,21 @@ or
 - Before merging a pull-request, make sure that at least one other person has reviewed or at least
   sanity checked the changes.
   
-- Unless traffic in this repo increases dramatically don't squash changes before merging. Merged branches can 
-  be deleted
+- Please use meaningful commit-messages, describe what and if necessary how you changed things. Not just "Fixed Stuff".
+  
+- When opening a pull request, please make sure all changes are self-contained and complete. In case you made some 
+  incidental fixes put them in a separate branch 
+  (e.g. by cherry-picking/ interactive rebasing the desired changes onto new branches. 
+  
+- Unless traffic in this repo increases dramatically, you don't squash changes before merging. 
+  Merged branches can be deleted
 
 ### Codestyle
 
 - Style follows PEP8, with the exception of line-length of 120 characters
 
-- prefer meaningful variable names over abbreviations
+- prefer meaningful variable names over abbreviations (e.g. `magnitude, flux, flux_error` over `m, f, df` unless
+  its very clear from context (`for i in range(...):`) or established notation.
 
 - Write at least basic smoke-tests (i.e. "if I run this, does it explode right away?") for new functionality and when
   refactoring existing code.
