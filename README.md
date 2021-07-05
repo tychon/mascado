@@ -81,6 +81,8 @@ or
 
 - Style follows PEP8, with the exception of line-length of 120 characters
 
+- Docstrings, especially for functions, follow to the numpy guidelines.
+
 - prefer meaningful variable names over abbreviations (e.g. `magnitude, flux, flux_error` over `m, f, df` unless
   its very clear from context (`for i in range(...):`) or established notation.
 
