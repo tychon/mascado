@@ -68,6 +68,42 @@ or
   This can be done in one go in an isolated environment. Just run `tox`.
   Add `-p auto` to parallelize for all test-environments, `-e py<yourversion>` to only test against a single version of python.
   
+- Do not merge user-visible changes without documenting them in the changelog. Also create/request a release from the
+  old version if it does not exist yet.
+
+- Before merging a pull-request, make sure that at least one other person has reviewed or at least
+  sanity checked the changes.
+  
+- Please use meaningful commit-messages, describe what and if necessary how you changed things. Not just "Fixed Stuff".
+  
+- When opening a pull request, please make sure all changes are self-contained and complete. In case you made some 
+  incidental fixes put them in a separate branch 
+  (e.g. by cherry-picking/ interactive rebasing the desired changes onto new branches. 
+  
+- Unless traffic in this repo increases dramatically, you don't squash changes before merging. 
+  Merged branches can be deleted
+
+### Codestyle
+
+- Style follows PEP8, with the exception of line-length of 120 characters
+
+- Docstrings, especially for functions, follow to the numpy guidelines.
+
+- Prefer meaningful variable names over abbreviations. E.g. `magnitude, flux, flux_error` over `m, f, df` unless
+  its very clear from context (`for i in range(...):`) or established notation.
+
+- Write at least basic smoke-tests (i.e. "if I run this, does it explode right away?") for new functionality and when
+  refactoring existing code.
+
+## Changelog
+
+###v1.0
+Initial release
+
+### unreleased Changes
+
+- (example) Testdata available as package resources: `mascado.resources.example_files`
+
 ## License
 
 Copyright 2018 Hannes Riechert <hannes@tychons.net>  
