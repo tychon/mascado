@@ -197,17 +197,17 @@ def affine_trafo_cat(cat, trafo, x='x', y='y'):
     >>> cat2
        x  y
     A  3  0
-    B  4  1
-    C  5  4
+    B  4  2
+    C  5  6
 
     To integrate back into the original catalog do
 
-    >>> cat1[cat2.columns] = cat2
-    >>> cat1
+    >>> cat[cat2.columns] = cat2
+    >>> cat
        x  y  extra
     A  3  0   Anja
-    B  4  1   Bert
-    C  5  4  Chris
+    B  4  2   Bert
+    C  5  6  Chris
     """
     points = cat.loc[:, [x, y]].values
     points = affine_trafo(points, trafo)

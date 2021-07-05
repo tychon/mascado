@@ -13,21 +13,22 @@ turn them up.
 
 Examples
 --------
-
->>> from mascado.distortions.polynomials import (
-...     PolyVectorField, Legendre)
->>> vf = PolyVectorField(Legendre(3))
->>> grid = np.array([[0, 0], [1, 1], [0, 1], [1, 0], [0.5, 0.5]])
->>> vectors = np.array([[1, 1], [0, 1], [0.5, 3], [-1, -1], [100, 3]])
->>> params, inliers, resvar = polyfit_svd_iterative(
-...     vf, grid, vectors, sigmas=0.5, maxoutliers=1, iterinfo='  ')
-  5 2D data points, 6 parameters
-  0 outliers before first iteration, 1 max
-    1. iteration: resvar 7.98e+03, outliers: 1 new, 0 old
-    2. iteration: resvar 1.12, outliers: 0 new, 1 old
-  Iterations: 2, outliers: 1
-  Residual variance: 1.12
->>> vf.set_params(params)
+# TODO the example is broken: Need a lot more positions/vectors to make polynomial overdetermined
+#  if you have an understanding of how to use this, please adapt and remove comments to re-enable
+# >>> from mascado.distortions.polynomials import (
+# ...     PolyVectorField, Legendre)
+# >>> vf = PolyVectorField(Legendre(3))
+# >>> grid = np.array([[0, 0], [1, 1], [0, 1], [1, 0], [0.5, 0.5]])
+# >>> vectors = np.array([[1, 1], [0, 1], [0.5, 3], [-1, -1], [100, 3]])
+# >>> params, inliers, resvar = polyfit_svd_iterative(
+# ...     vf, grid, vectors, sigmas=0.5, maxoutliers=1, iterinfo='  ')
+#   5 2D data points, 6 parameters
+#   0 outliers before first iteration, 1 max
+#     1. iteration: resvar 7.98e+03, outliers: 1 new, 0 old
+#     2. iteration: resvar 1.12, outliers: 0 new, 1 old
+#   Iterations: 2, outliers: 1
+#   Residual variance: 1.12
+# >>> vf.set_params(params)
 
 """
 

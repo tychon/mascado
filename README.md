@@ -44,9 +44,13 @@ Then open `./docs/build/html/index.html`.
 
 
 ## Tests
+All available inspections and tests can be run via tox.
+
+    $ pip/conda install tox  # in case its not installed 
+    $ tox
 
 There are a few unit tests for the package, though not nearly
-extensive.  Run with
+extensive. Tests can be run with
 
     $ python -m unittest discover --start-directory tests
 
@@ -61,6 +65,8 @@ or
 ## Development workflow/Contributing
 
 - Ensure changes conform to coding style and don't break anything by running the test cases, pylint, mypy and flake8. 
+  This can be done in one go in an isolated environment. Just run `tox`.
+  Add `-p auto` to parallelize for all test-environments, `-e py<yourversion>` to only test against a single version of python.
   
 - Do not merge user-visible changes without documenting them in the changelog. Also create/request a release from the
   old version if it does not exist yet.

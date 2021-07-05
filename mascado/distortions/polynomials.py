@@ -436,8 +436,9 @@ class CoeffPolynomial (Polynomial):
         Examples
         --------
         Convert a flattened parameter list to a coefficient matrix:
-
-        >>> idxs = upper_left_triangular_indices(degree)
+        >>> degree = 1
+        >>> paramlist = [1, -3, 0.12e-3]
+        >>> idxs = CoeffPolynomial.upper_left_triangular_indices(degree)
         >>> mat = np.zeros((degree+1, degree+1))
         >>> mat[idxs] = paramlist
 
