@@ -1,4 +1,7 @@
-from importlib.resources import read_text, contents, files
+try:
+    from importlib.resources import read_text, contents, files  # type:ignore
+except ModuleNotFoundError:
+    from importlib_resources import read_text, contents, files  # type:ignore
 from unittest import TestCase
 import mascado.resources as res
 

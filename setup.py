@@ -16,6 +16,7 @@ setup(
 
     packages=find_packages(exclude=['tests.*', 'tests']),
     install_requires=[
+        'importlib-resources',
         'numpy>=1.14',
         'matplotlib',
         'scipy',
