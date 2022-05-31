@@ -30,7 +30,7 @@ def set_fontsize(small=8, medium=10, bigger=12):
 
 
 def plot_distortions(ax, positions, distortions,
-                     inliers=None, limits=(-1.1, 1.1),
+                     inliers=None, limits=None,
                      positionunits=(1, "normalized"), positionunits2=None,
                      arrowunits="arcsec", keylen=None,
                      keypos=(0.5, 1.04), dotsize=2):
@@ -104,7 +104,7 @@ def plot_distortions(ax, positions, distortions,
     ax.set_aspect('equal')
 
 
-def plot_residuals(fig, positions, residuals, inliers=None, limits=(-1.1, 1.1),
+def plot_residuals(fig, positions, residuals, inliers=None, limits=None,
                    positionunits=(1, "normalized"),
                    arrowunits="arcsec", keylen=None,
                    keypos=(1.2, 1.2), dotsize=1, **kwgridspec):
